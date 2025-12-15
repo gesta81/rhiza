@@ -275,10 +275,10 @@ cp /tmp/rhiza/.github/scripts/sync.sh .github/scripts
 
 At this stage:
 
-❌ No templates are copied yet
-❌ No existing files are modified
-✅ Only the sync mechanism is installed
-⚠️ **Do not merge this branch yet.**
+  - ❌ No templates are copied yet
+  - ❌ No existing files are modified
+  - ✅ Only the sync mechanism is installed
+  - ⚠️ **Do not merge this branch yet.**
 
 #### Step 3: Perform the first sync
 
@@ -290,9 +290,9 @@ Run the sync script to apply the templates defined in '.github/template.yml'
 
 This will:
 
-  Fetch the selected templates from the Rhiza repository
-  Apply them locally according to your include/exclude rules
-  Stage or commit the resulting changes on the current branch
+  - Fetch the selected templates from the Rhiza repository
+  - Apply them locally according to your include/exclude rules
+  - Stage or commit the resulting changes on the current branch
 
 Review the changes carefully:
 
@@ -300,6 +300,8 @@ Review the changes carefully:
 git status
 git diff
 ```
+
+If happy with the suggested changes push them
 
 ```bash
 git add .
@@ -313,9 +315,9 @@ This approach keeps your project’s configuration in sync with Rhiza’s latest
 
 Prerequisites:
 
-  A .github/template.yml file exists, defining **which templates to include or exclude**.
-  The first manual sync (./.github/scripts/sync.sh) has been performed.
-  The .github/workflows/sync.yml workflow is present in your repository.
+  - A .github/template.yml file exists, defining **which templates to include or exclude**.
+  - The first manual sync (./.github/scripts/sync.sh) has been performed.
+  - The .github/workflows/sync.yml workflow is present in your repository.
 
 The workflow can run:
 
