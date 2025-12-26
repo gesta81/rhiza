@@ -89,7 +89,8 @@ install: install-uv install-extras ## install
 	  ${UV_BIN} pip install -r tests/requirements.txt || { printf "${RED}[ERROR] Failed to install test requirements${RESET}\n"; exit 1; }; \
 	fi
 
-	# Install the dependencies from pyproject.toml
+	# Install dependencies from pyproject.toml
+	# Note: pyproject.toml is assumed to exist (validation would fail otherwise)
 	@if [ -f "uv.lock" ]; then \
 	  printf "${BLUE}[INFO] Installing dependencies from lock file${RESET}\n"; \
 	  ${UV_BIN} sync --all-extras --frozen || { printf "${RED}[ERROR] Failed to install dependencies${RESET}\n"; exit 1; }; \
