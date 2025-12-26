@@ -46,7 +46,7 @@ class TestGitRepoFixture:
             assert os.access(tool_path, os.X_OK), f"{tool} is not executable"
 
     def test_git_repo_has_github_scripts_directory(self, git_repo):
-        """Git repo should have .rhiza/scripts directory."""
+        """Git repo should have .github/rhiza/scripts directory."""
         scripts_dir = git_repo / ".rhiza" / "scripts"
         assert scripts_dir.exists()
         assert (scripts_dir / "release.sh").exists()
