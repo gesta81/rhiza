@@ -77,8 +77,8 @@ marimo:_generate_child_pipeline:
       for notebook in $NOTEBOOKS; do
         JOB_NAME=$(basename "$notebook" .py | tr -c '[:alnum:]' '_')
         jinja2 .gitlab/templates/marimo_job_template.yml \
-          NOTEBOOK="$notebook" \
-          JOB_NAME="$JOB_NAME" >> "$CHILD_FILE"
+          -D NOTEBOOK="$notebook" \
+          -D JOB_NAME="$JOB_NAME" >> "$CHILD_FILE"
       done
     - cat "$CHILD_FILE"
   artifacts:
