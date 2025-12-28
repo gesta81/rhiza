@@ -139,11 +139,11 @@ marimo: install ## fire up Marimo server
 	fi
 
 ##@ Quality and Formatting
-deptry: install-uv ## run deptry if pyproject.toml exists
-	@if [ -f "pyproject.toml" ]; then \
-	  ${UVX_BIN} deptry "${SOURCE_FOLDER}"; \
+deptry: install-uv ## Run deptry
+	@if [ -d src ]; then \
+		$(UVX_BIN) deptry src; \
 	else \
-	  printf "${YELLOW} No pyproject.toml found, skipping deptry${RESET}\n"; \
+		$(UVX_BIN) deptry .; \
 	fi
 
 fmt: install-uv ## check the pre-commit hooks and the linting
