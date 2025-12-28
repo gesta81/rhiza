@@ -108,17 +108,27 @@ sync: install-uv ## sync with template repository as defined in .github/template
 validate: install-uv ## validate project structure against template repository as defined in .github/template.yml
 	@${UVX_BIN} "rhiza>=0.7.1" validate .
 
-clean: ## clean
-	@printf "${BLUE}Cleaning project...${RESET}\n"
-	# do not clean .env files
-	@git clean -d -X -f -e .env -e '.env.*'
-	@rm -rf dist build *.egg-info .coverage .pytest_cache
-	@printf "${BLUE}Removing local branches with no remote counterpart...${RESET}\n"
+clean: ## Clean project artifacts and stale local branches
+	@printf "%bCleaning project...%b\n" "$(BLUE)" "$(RESET)"
+
+	# Remove ignored files/directories, but keep .env files
+	@git clean -d -X -f \
+		-e .env \
+		-e '.env.*'
+
+	# Remove build & test artifacts
+	@rm -rf \
+		dist \
+		build \
+		*.egg-info \
+		.coverage \
+		.pytest_cache
+
+	@printf "%bRemoving local branches with no remote counterpart...%b\n" "$(BLUE)" "$(RESET)"
+
 	@git fetch --prune
-	@git branch -vv \
-	  | grep ': gone]' \
-	  | awk '{print $1}' \
-	  | xargs -r git branch -D 2>/dev/null || true
+
+	@git branch -vv | awk '/: gone]/{print $$1}' | xargs -r git branch -D
 
 ##@ Tools
 marimo: install ## fire up Marimo server
