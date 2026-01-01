@@ -655,10 +655,13 @@ The release workflow (`.github/workflows/release.yml`) triggers on the tag push 
 
 1.  **Validates** - Checks the tag format and ensures no duplicate releases
 2.  **Builds** - Builds the Python package (if `pyproject.toml` exists)
-3.  **Drafts** - Creates a draft GitHub release with artifacts
-4.  **PyPI** - Publishes to PyPI (if not marked private)
-5.  **Devcontainer** - Publishes devcontainer image (if `PUBLISH_DEVCONTAINER=true`)
-6.  **Finalizes** - Publishes the GitHub release with links to PyPI and container images
+3.  **Drafts** - Creates a draft GitHub release with artifacts and auto-generated release notes
+4.  **Changelog** - Automatically updates `CHANGELOG.md` with the new version and release notes
+5.  **PyPI** - Publishes to PyPI (if not marked private)
+6.  **Devcontainer** - Publishes devcontainer image (if `PUBLISH_DEVCONTAINER=true`)
+7.  **Finalizes** - Publishes the GitHub release with links to PyPI and container images
+
+The `CHANGELOG.md` file is automatically maintained and follows the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format. Each release entry includes the version, date, and auto-generated release notes from merged pull requests.
 
 ### Configuration Options
 

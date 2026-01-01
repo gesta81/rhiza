@@ -91,3 +91,36 @@ make test
 
 Please make sure that your change doesn't cause any
 of the unit tests to fail.
+
+## Release Process and Changelog
+
+This project maintains an automated changelog in `CHANGELOG.md` that follows the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+### How It Works
+
+When a new version tag is pushed (e.g., `v0.4.2`), the release workflow automatically:
+
+1. Creates a draft GitHub/GitLab release with auto-generated release notes
+2. Updates `CHANGELOG.md` with the new version entry and release notes
+3. Commits and pushes the updated changelog back to the main branch
+4. Publishes the final release
+
+### Creating a Release
+
+To create a new release:
+
+1. Update the version in `pyproject.toml`
+2. Create and push a version tag:
+   ```bash
+   git tag v0.4.2
+   git push origin v0.4.2
+   ```
+3. The release workflow will automatically update the changelog and create the release
+
+### Changelog Maintenance
+
+- The `CHANGELOG.md` file is automatically maintained by the CI/CD pipeline
+- Manual edits to `CHANGELOG.md` are discouraged as they will be overwritten during releases
+- To ensure your changes appear in the changelog, write clear and descriptive PR titles and descriptions
+- The automated release notes are generated from merged pull requests
+
