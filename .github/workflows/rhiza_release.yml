@@ -213,8 +213,7 @@ jobs:
             
             # Add release notes (skip the "What's Changed" header and "Full Changelog" link)
             sed -n '/^## What/,/^\*\*Full Changelog/p' /tmp/release_notes.md | \
-              sed '1d;$d' | \
-              sed 's/^//' || echo "See release notes for details."
+              sed '1d;$d' || echo "See release notes for details."
             echo ""
             
             # Add the rest of the changelog (skip header)
@@ -229,7 +228,7 @@ jobs:
           sed -i "s|^\[Unreleased\]:.*|[Unreleased]: https://github.com/Jebel-Quant/rhiza/compare/v${VERSION}...HEAD|" CHANGELOG.md
           
           # Find the previous version from the changelog to create comparison link
-          PREV_VERSION=$(grep -oP '^\[\K[0-9]+\.[0-9]+\.[0-9]+(?=\]:)' CHANGELOG.md | head -n 1)
+          PREV_VERSION=$(grep -oP '^\[\K[0-9]+\.[0-9]+\.[0-9]+[^]]*(?=\]:)' CHANGELOG.md | head -n 1)
           
           # Add the new version link after [Unreleased]
           if [ -n "$PREV_VERSION" ]; then
