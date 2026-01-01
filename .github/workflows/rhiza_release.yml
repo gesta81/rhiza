@@ -171,12 +171,86 @@ jobs:
           generate_release_notes: true
           draft: true
 
+  update-changelog:
+    name: Update Changelog
+    runs-on: ubuntu-latest
+    needs: [tag, build, draft-release]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Release Notes
+        id: release_notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.tag.outputs.tag }}
+        run: |
+          # Get the release notes from the draft release
+          RELEASE_BODY=$(gh release view "$TAG" --json body --jq '.body')
+          
+          # Save to a file for easier processing
+          echo "$RELEASE_BODY" > /tmp/release_notes.md
+
+      - name: Update CHANGELOG.md
+        env:
+          TAG: ${{ needs.tag.outputs.tag }}
+        run: |
+          VERSION=${TAG#v}
+          DATE=$(date +%Y-%m-%d)
+          
+          # Create temporary file with new entry
+          {
+            # Keep the header
+            head -n 6 CHANGELOG.md
+            
+            # Add new version entry
+            echo ""
+            echo "## [$VERSION] - $DATE"
+            echo ""
+            
+            # Add release notes (skip the "What's Changed" header and "Full Changelog" link)
+            sed -n '/^## What/,/^\*\*Full Changelog/p' /tmp/release_notes.md | \
+              sed '1d;$d' | \
+              sed 's/^//' || echo "See release notes for details."
+            echo ""
+            
+            # Add the rest of the changelog (skip header)
+            tail -n +7 CHANGELOG.md
+          } > /tmp/CHANGELOG_new.md
+          
+          # Replace old changelog
+          mv /tmp/CHANGELOG_new.md CHANGELOG.md
+          
+          # Update the links section at the bottom
+          # Find the [Unreleased] link and update it
+          sed -i "s|\[Unreleased\]:.*|[Unreleased]: https://github.com/Jebel-Quant/rhiza/compare/v${VERSION}...HEAD|" CHANGELOG.md
+          
+          # Add the new version link after [Unreleased]
+          sed -i "/^\[Unreleased\]:/a [$VERSION]: https://github.com/Jebel-Quant/rhiza/compare/v${VERSION%.*.$((${VERSION##*.}-1))}...v$VERSION" CHANGELOG.md || \
+          sed -i "/^\[Unreleased\]:/a [$VERSION]: https://github.com/Jebel-Quant/rhiza/releases/tag/v$VERSION" CHANGELOG.md
+
+      - name: Commit and Push Changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update CHANGELOG.md for ${{ needs.tag.outputs.tag }}"
+            git push origin HEAD:main
+          fi
+
   # Decide at step-level whether to publish
   pypi:
     name: Publish to PyPI
     runs-on: ubuntu-latest
     environment: release
-    needs: [tag, build, draft-release]
+    needs: [tag, build, draft-release, update-changelog]
     outputs:
       should_publish: ${{ steps.check_dist.outputs.should_publish }}
 
@@ -224,7 +298,7 @@ jobs:
     name: Publish Devcontainer Image
     runs-on: ubuntu-latest
     environment: release
-    needs: [tag, build, draft-release]
+    needs: [tag, build, draft-release, update-changelog]
     outputs:
       should_publish: ${{ steps.check_publish.outputs.should_publish }}
       image_name: ${{ steps.image_name.outputs.image_name }}
