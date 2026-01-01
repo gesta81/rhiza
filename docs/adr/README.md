@@ -25,8 +25,8 @@ Each ADR follows a consistent format defined in [0000-adr-template.md](0000-adr-
 
 ## Creating a New ADR
 
-1. Copy the template: `cp docs/adr/0000-adr-template.md docs/adr/XXXX-your-title.md`
-2. Use the next available number (e.g., 0002, 0003)
+1. Copy the template: `cp docs/adr/0000-adr-template.md docs/adr/0002-your-title.md`
+2. Use the next available 4-digit number (e.g., 0002, 0003, 0004)
 3. Fill in all sections with relevant information
 4. Update this README to add your ADR to the index
 5. Submit via pull request for review
