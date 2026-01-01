@@ -121,10 +121,10 @@ validate: ## validate project structure against template repository as defined i
 clean: ## Clean project artifacts and stale local branches
 	@printf "%bCleaning project...%b\n" "$(BLUE)" "$(RESET)"
 
-	# Remove ignored files/directories, but keep .env files
+	# Remove ignored files/directories, but keep .env files, tested with futures project
 	@git clean -d -X -f \
-		-e .env \
-		-e '.env.*'
+		-e '!.env' \
+		-e '!.env.*'
 
 	# Remove build & test artifacts
 	@rm -rf \
