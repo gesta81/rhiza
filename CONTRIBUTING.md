@@ -120,7 +120,7 @@ To create a new release:
 ### Changelog Maintenance
 
 - The `CHANGELOG.md` file is automatically maintained by the CI/CD pipeline
-- Manual edits to `CHANGELOG.md` are discouraged as they will be overwritten during releases
+- Existing entries in `CHANGELOG.md` are preserved, but new version sections are added automatically during releases, so you generally should not add new release entries manually
 - To ensure your changes appear in the changelog, write clear and descriptive PR titles and descriptions
 - The automated release notes are generated from merged pull requests
 
