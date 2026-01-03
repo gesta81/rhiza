@@ -29,27 +29,9 @@ jobs:
         run: |
           make test
 
-      - name: Check Execution Conditions
-        id: check
-        run: |
-          if [ -f "_tests/coverage.json" ]; then
-            echo "has_report=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_report=false" >> $GITHUB_OUTPUT
-          fi
-          
-          if [ -d "tests/test_rhiza" ]; then
-            echo "is_rhiza=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_rhiza=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Check Coverage and Create Issue
-        if: steps.check.outputs.has_report == 'true' || steps.check.outputs.is_rhiza == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HAS_REPORT: ${{ steps.check.outputs.has_report }}
-          IS_RHIZA: ${{ steps.check.outputs.is_rhiza }}
           ISSUE_ASSIGNEE: copilot
         run: |
           python -c "
@@ -105,11 +87,18 @@ jobs:
                   return "Please analyze the coverage report and add tests to reach 100% coverage."
 
           instructions = get_agent_instructions()
-          has_report = os.environ.get('HAS_REPORT') == 'true'
-          is_rhiza = os.environ.get('IS_RHIZA') == 'true'
+          
+          coverage_path = '_tests/coverage.json'
+          has_report = os.path.exists(coverage_path)
+          repo = os.environ.get('GITHUB_REPOSITORY')
+          is_rhiza = repo == 'jebel-quant/rhiza'
           assignee = os.environ.get('ISSUE_ASSIGNEE')
           
+          print(f'Checking coverage report at {coverage_path}...')
+          print(f'Repository: {repo}')
+          
           if not has_report:
+              print('Coverage report not found.')
               if is_rhiza:
                   print('Rhiza repository detected. Creating issue for framework test review...')
                   title = 'Rhiza Framework Test Review Needed'
@@ -119,10 +108,12 @@ jobs:
                       '@github-actions assign to copilot'
                   )
                   create_issue(title, body, ['coverage', 'chore'], assignee)
+              else:
+                  print('Not the Rhiza repository. Skipping.')
               sys.exit(0)
           
           try:
-              with open('_tests/coverage.json') as f:
+              with open(coverage_path) as f:
                   data = json.load(f)
               
               coverage = data['totals']['percent_covered']
