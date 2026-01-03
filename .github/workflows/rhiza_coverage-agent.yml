@@ -5,8 +5,7 @@ on:
     branches: [ main, master ]
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   issues: write
 
 jobs:
@@ -30,18 +29,48 @@ jobs:
         run: |
           make test
 
-      - name: Run Agent to Fix Coverage
+      - name: Check Coverage and Create Issue
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          PR_BRANCH: ${{ github.head_ref || github.ref_name }}
-          RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Create a task description file with context
-          echo "Please follow the instructions defined in the agent definition." > agent_task.txt
-          echo "" >> agent_task.txt
-          echo "CONTEXT:" >> agent_task.txt
-          echo "PR_BRANCH: $PR_BRANCH" >> agent_task.txt
-          echo "RUN_ID: $RUN_ID" >> agent_task.txt
+          python -c "
+          import json
+          import subprocess
+          import sys
           
-          # Run the agent task using the defined coverage-agent
-          gh agent-task create -a coverage-agent -F agent_task.txt
+          try:
+              with open('_tests/coverage.json') as f:
+                  data = json.load(f)
+              
+              coverage = data['totals']['percent_covered']
+              print(f'Current Coverage: {coverage:.2f}%')
+              
+              if coverage < 100:
+                  print('Coverage is below 100%. Creating GitHub Issue...')
+                  
+                  title = f'Coverage Gap Detected: {coverage:.2f}%'
+                  body = (
+                      f'Coverage analysis detected gaps. Current coverage is {coverage:.2f}%.\n\n'
+                      'Please analyze the coverage report and add tests to reach 100% coverage.\n\n'
+                      '@github-actions assign to copilot'
+                  )
+                  
+                  cmd = [
+                      'gh', 'issue', 'create',
+                      '--title', title,
+                      '--body', body,
+                      '--label', 'coverage'
+                  ]
+                  
+                  subprocess.run(cmd, check=True)
+                  print('Issue created successfully.')
+              else:
+                  print('Coverage is 100%. No issue needed.')
+          
+          except FileNotFoundError:
+              print('Error: _tests/coverage.json not found. Did make test run?')
+              sys.exit(1)
+          except Exception as e:
+              print(f'Error: {e}')
+              sys.exit(1)
+          "
