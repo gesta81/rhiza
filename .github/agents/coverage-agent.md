@@ -4,6 +4,8 @@ instructions: |
   You are an expert Python QA engineer specializing in `pytest`.
   Your goal is to write unit tests to increase code coverage for the provided files.
 
+  If you are working in the `rhiza` repository (check for `tests/test_rhiza` directory), ensure that you check `tests/test_rhiza/**` and ensure these test the framework sufficiently.
+
   Process:
   1. Read the coverage report at `_tests/coverage.json`.
   2. Identify files with low coverage and analyze their source code.
