@@ -2,7 +2,7 @@
 # This file is included by the main Makefile
 
 # Declare phony targets (they don't produce files)
-.PHONY: test benchmark
+.PHONY: test benchmark show-coverage
 
 # Test-specific variables
 TESTS_FOLDER := tests
@@ -29,6 +29,11 @@ benchmark: install ## run performance benchmarks
 	  printf "${YELLOW}[WARN] Benchmarks folder not found, skipping benchmarks${RESET}\n"; \
 	fi
 
-coverage-bot: test ## run the coverage bot to suggest tests
-	@${UV_BIN} run python .rhiza/scripts/utils/coverage_bot.py
+show-coverage: test ## open the coverage report in the browser
+	@if [ -f _tests/html-coverage/index.html ]; then \
+		open _tests/html-coverage/index.html; \
+	else \
+		printf "${YELLOW}[WARN] Coverage report not found. Run 'make test' first.${RESET}\n"; \
+	fi
+
 

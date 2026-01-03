@@ -1,12 +1,13 @@
-name: Coverage Agent
+name: RHIZA COVERAGE AGENT
 
 on:
   pull_request:
     branches: [ main, master ]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   check-coverage:
@@ -25,25 +26,18 @@ jobs:
         with:
           python-version-file: ".python-version"
 
-      - name: Install dependencies
-        run: |
-          uv sync --all-extras --dev
-          uv pip install openai
-
       - name: Run tests and generate coverage
         run: |
           make test
 
-      - name: Run Coverage Bot
-        id: coverage-bot
+      - name: Run Agent to Fix Coverage
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCH: ${{ github.head_ref || github.ref_name }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          uv run python .rhiza/scripts/utils/coverage_bot.py
-
-      - name: Post Coverage Comment
-        if: failure() && github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body-file coverage_report.md
+          # Create a temporary prompt file combining instructions and context
+          cat .github/agents/coverage-agent.md > agent_prompt.txt
+          echo -e "\n\nCONTEXT:\nPR_BRANCH: $PR_BRANCH\nRUN_ID: $RUN_ID" >> agent_prompt.txt
+          
+          gh agent-task create --body-file agent_prompt.txt
