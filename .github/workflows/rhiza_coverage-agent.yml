@@ -29,14 +29,55 @@ jobs:
         run: |
           make test
 
+      - name: Check Execution Conditions
+        id: check
+        run: |
+          if [ -f "_tests/coverage.json" ]; then
+            echo "has_report=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_report=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -d "tests/test_rhiza" ]; then
+            echo "is_rhiza=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_rhiza=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Check Coverage and Create Issue
+        if: steps.check.outputs.has_report == 'true' || steps.check.outputs.is_rhiza == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HAS_REPORT: ${{ steps.check.outputs.has_report }}
+          IS_RHIZA: ${{ steps.check.outputs.is_rhiza }}
         run: |
           python -c "
           import json
           import subprocess
           import sys
+          import os
+          
+          has_report = os.environ.get('HAS_REPORT') == 'true'
+          is_rhiza = os.environ.get('IS_RHIZA') == 'true'
+          
+          if not has_report:
+              if is_rhiza:
+                  print('Rhiza repository detected. Creating issue for framework test review...')
+                  title = 'Rhiza Framework Test Review Needed'
+                  body = (
+                      'The coverage report was not found, but this is the Rhiza repository.\n\n'
+                      'Please review \`tests/test_rhiza\` and ensure the framework is sufficiently tested.\n\n'
+                      '@github-actions assign to copilot'
+                  )
+                  cmd = [
+                      'gh', 'issue', 'create',
+                      '--title', title,
+                      '--body', body,
+                      '--label', 'coverage'
+                  ]
+                  subprocess.run(cmd, check=True)
+                  print('Issue created successfully.')
+              sys.exit(0)
           
           try:
               with open('_tests/coverage.json') as f:
@@ -67,9 +108,6 @@ jobs:
               else:
                   print('Coverage is 100%. No issue needed.')
           
-          except FileNotFoundError:
-              print('Error: _tests/coverage.json not found. Did make test run?')
-              sys.exit(1)
           except Exception as e:
               print(f'Error: {e}')
               sys.exit(1)
