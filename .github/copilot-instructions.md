@@ -1,6 +1,8 @@
 # Rhiza Copilot Instructions
 
-You are working in the `rhiza` project, a collection of reusable configuration templates for modern Python projects.
+You are working in a project that utilizes the `rhiza` framework. Rhiza is a collection of reusable configuration templates and tooling designed to standardize and streamline modern Python development.
+
+As a Rhiza-based project, this workspace adheres to specific conventions for structure, dependency management, and automation.
 
 ## Development Environment
 
