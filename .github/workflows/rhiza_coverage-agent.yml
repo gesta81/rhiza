@@ -57,6 +57,17 @@ jobs:
           import sys
           import os
           
+          def ensure_label(name, color, description):
+              # Attempt to create label. If it fails (e.g. exists), we ignore the error.
+              subprocess.run(
+                  ['gh', 'label', 'create', name, '--color', color, '--description', description],
+                  capture_output=True
+              )
+
+          # Ensure labels exist
+          ensure_label('coverage', '0E8A16', 'Related to code coverage')
+          ensure_label('chore', 'EDEDED', 'Routine tasks and maintenance')
+
           has_report = os.environ.get('HAS_REPORT') == 'true'
           is_rhiza = os.environ.get('IS_RHIZA') == 'true'
           
@@ -73,7 +84,8 @@ jobs:
                       'gh', 'issue', 'create',
                       '--title', title,
                       '--body', body,
-                      '--label', 'coverage'
+                      '--label', 'coverage',
+                      '--label', 'chore'
                   ]
                   subprocess.run(cmd, check=True)
                   print('Issue created successfully.')
@@ -100,7 +112,8 @@ jobs:
                       'gh', 'issue', 'create',
                       '--title', title,
                       '--body', body,
-                      '--label', 'coverage'
+                      '--label', 'coverage',
+                      '--label', 'chore'
                   ]
                   
                   subprocess.run(cmd, check=True)
