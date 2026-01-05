@@ -77,10 +77,18 @@ Both the `.venv` and `bin` directories are listed in `.gitignore`.
 Run `make help` to see all available targets:
 
 ```makefile
+  ____  _     _
+ |  _ \| |__ (_)______ _
+ | |_) | '_ \| |_  / _\`|
+ |  _ <| | | | |/ / (_| |
+ |_| \_\_| |_|_/___\__,_|
+ 
 Usage:
   make <target>
 
 Targets:
+
+Meta
 
 Bootstrap
   install-uv            ensure uv/uvx is installed
@@ -125,6 +133,19 @@ Presentation
 Customisations
   install-extras        run custom build script (if exists)
   post-release          perform post-release tasks
+
+Agentic Workflows
+  copilot               open interactive prompt for copilot
+  analyse-repo          run the analyser agent to update REPOSITORY_ANALYSIS.md
+  summarize-changes     summarize changes since the most recent release/tag
+  install-copilot       checks for copilot and prompts to install
+
+GitHub Helpers
+  gh-install            check for gh cli existence and install extensions
+  view-prs              list open pull requests
+  view-issues           list open issues
+  failed-workflows      list recent failing workflow runs
+  whoami                check github auth status
 
 ```
 
