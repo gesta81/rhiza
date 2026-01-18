@@ -197,9 +197,9 @@ Rhiza is a well-architected, professionally-maintained repository implementing a
 - Comprehensive --dry-run flag coverage (PR #363)
 - 90% coverage threshold enforced via `--cov-fail-under=90`
 - Coverage reports published to GitHub Pages via `make book` (rhiza_book.yml workflow)
+- Benchmark regression detection via `github-action-benchmark` (alerts at 150% threshold)
 
 **Weaknesses:**
-- No benchmarks integrated into CI with regression detection
 - Limited unit tests (mostly integration/structural tests)
 
 ---
