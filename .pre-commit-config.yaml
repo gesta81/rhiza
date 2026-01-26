@@ -46,7 +46,7 @@ repos:
     rev: 1.9.3
     hooks:
       - id: bandit
-        args: ["-c", "bandit.toml"]
+        args: ["-c", "pyproject.toml"]
 
   - repo: local
     hooks:
