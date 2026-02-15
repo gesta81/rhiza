@@ -1,9 +1,9 @@
 # Repository Quality Scoring
 
 **Repository**: Rhiza
-**Assessment Date**: 2026-02-11
-**Version Analyzed**: 0.7.1
-**Overall Score**: 9.4/10
+**Assessment Date**: 2026-02-15
+**Version Analyzed**: 0.7.5
+**Overall Score**: 9.6/10
 
 ---
 
@@ -11,17 +11,17 @@
 
 | Category | Score | Weight | Weighted |
 |----------|-------|--------|----------|
-| Code Quality | 9/10 | 10% | 0.90 |
+| Code Quality | 10/10 | 10% | 1.00 |
 | Testing | 10/10 | 15% | 1.50 |
-| Documentation | 9/10 | 10% | 0.90 |
+| Documentation | 9.5/10 | 10% | 0.95 |
 | CI/CD | 10/10 | 15% | 1.50 |
-| Security | 9/10 | 10% | 0.90 |
+| Security | 9.5/10 | 10% | 0.95 |
 | Architecture | 9/10 | 10% | 0.90 |
 | Dependency Management | 10/10 | 10% | 1.00 |
 | Developer Experience | 9/10 | 10% | 0.90 |
 | Maintainability | 9/10 | 5% | 0.45 |
 | Shell Scripts | 9/10 | 5% | 0.45 |
-| **Overall** | **9.4/10** | 100% | **9.40** |
+| **Overall** | **9.6/10** | 100% | **9.60** |
 
 **Quality Tier**: Enterprise-Grade / Production-Ready
 
@@ -29,20 +29,21 @@
 
 ## Detailed Assessment
 
-### 1. Code Quality: 9/10
+### 1. Code Quality: 10/10
 
 **Strengths**:
-- Comprehensive Ruff configuration with 13 actively enforced rule sets (D, E, F, I, N, W, UP, D105, D107, B, C4, PT, RUF, TRY, ICN)
+- Comprehensive Ruff configuration with 15 actively enforced rule sets (D, E, F, I, N, W, UP, D105, D107, B, C4, SIM, PT, RUF, S, TRY, ICN)
+- **Security (S) and simplicity (SIM) rules now enabled** (PR #678)
 - Google-style docstrings enforced via pydocstyle rules with explicit magic method coverage
 - Strong type annotations encouraged with `from __future__ import annotations` pattern
 - 120-character line length with consistent formatting
 - Modern Python syntax enforced via pyupgrade rules (Python 3.11+)
 - Import sorting via isort integration
 - PEP 8 naming conventions enforced
+- **Per-file exceptions refactored to be targeted and justified** (PR #678)
 
 **Weaknesses**:
-- Security (S) and complexity (SIM) rule sets intentionally disabled
-- Broad per-file exceptions for tests and notebooks
+- None significant
 
 ---
 
@@ -50,21 +51,21 @@
 
 **Strengths**:
 - 18 dedicated test files with 121 test functions and methods
-- Multiple test types: unit, integration, doctest, README code execution, benchmarks
+- Multiple test types: unit, integration, doctest, README code execution, benchmarks, **property-based tests**
+- **Property-based testing with Hypothesis** (tests/property/test_makefile_properties.py)
 - Sophisticated fixtures in conftest.py for git repository mocking
 - README code blocks validated via test_readme.py
 - Release script tested with mock git environments
 - Multi-Python version testing (3.11, 3.12, 3.13, 3.14)
-- Coverage tracking with enforcement threshold
+- 90% coverage threshold enforced via `--cov-fail-under=90`
 - Benchmark regression detection via pytest-benchmark
 
 **Weaknesses**:
-- No property-based testing (hypothesis)
-- No load/stress testing
+- No load/stress testing for performance under heavy use
 
 ---
 
-### 3. Documentation: 9/10
+### 3. Documentation: 9.5/10
 
 **Strengths**:
 - Comprehensive README.md (18KB) with quick start, features, integration guide
@@ -78,10 +79,11 @@
 - Code of conduct (CODE_OF_CONDUCT.md)
 - Auto-generated API docs via pdoc
 - Interactive Marimo notebooks
+- **GitHub Pages deployment configured** (rhiza_book.yml) with MkDocs Material theme
+- **Automated documentation publishing** on every push to main
 
 **Weaknesses**:
-- Some scripts have minimal inline comments
-- No external documentation hosting (ReadTheDocs/Sphinx)
+- Some shell scripts have minimal inline comments for complex logic
 
 ---
 
@@ -113,25 +115,28 @@
 
 ---
 
-### 5. Security: 9/10
+### 5. Security: 9.5/10
 
 **Strengths**:
 - Comprehensive SECURITY.md with vulnerability reporting process
 - Response SLAs defined (48h acknowledgment, 7d assessment, 30d resolution)
 - Multiple security scanners:
   - CodeQL for semantic analysis
-  - Bandit for Python security patterns
+  - Bandit for Python security patterns (S rules now enforced)
   - pip-audit for dependency vulnerabilities
   - actionlint with shellcheck for workflow/script validation
+  - **Trivy container vulnerability scanning** for Docker images (rhiza_docker.yml)
+- **SBOM generation in release workflow** (CycloneDX JSON + XML formats)
+- **SBOM attestations** for supply chain transparency (public repos)
 - OIDC trusted publishing (no stored credentials)
 - SLSA provenance attestations
 - Locked dependencies via uv.lock (1013 lines)
 - Renovate for automated security updates
+- **Environment-based deployment protection** (release environment for PyPI publishing)
 
 **Weaknesses**:
-- No SBOM generation in release workflow
-- No container image scanning for devcontainer
-- Some bandit rules disabled in tests (S101, S603)
+- Container image scanning for devcontainer not yet merged (branch exists, was reverted)
+- Some bandit rules necessarily disabled in tests (S101 for assert, S603 for subprocess)
 
 ---
 
@@ -236,27 +241,40 @@
 
 ### High Priority
 
-| Improvement | Impact | Effort |
-|-------------|--------|--------|
-| Add SBOM generation to release workflow | Supply chain transparency | Medium |
-| Container image scanning for devcontainer | Security completeness | Low |
-| Manual approval gate for PyPI publishing | Release safety | Low |
+| Improvement | Impact | Effort | Status |
+|-------------|--------|--------|--------|
+| ~~Add SBOM generation to release workflow~~ | Supply chain transparency | Medium | ✅ Done (rhiza_release.yml) |
+| Container image scanning for devcontainer | Security completeness | Low | ⏳ Branch exists, needs merge |
+| ~~Manual approval gate for PyPI publishing~~ | Release safety | Low | ✅ Environment protection available |
 
 ### Medium Priority
 
-| Improvement | Impact | Effort |
-|-------------|--------|--------|
-| Property-based testing with hypothesis | Test coverage depth | Medium |
-| More inline comments in shell scripts | Maintainability | Low |
-| External documentation hosting | Discoverability | Medium |
+| Improvement | Impact | Effort | Status |
+|-------------|--------|--------|--------|
+| ~~Property-based testing with hypothesis~~ | Test coverage depth | Medium | ✅ Done (tests/property/) |
+| More inline comments in shell scripts | Maintainability | Low | ⏳ Pending |
+| ~~External documentation hosting~~ | Discoverability | Medium | ✅ Done (GitHub Pages) |
+| Load/stress testing | Performance validation | Medium | ⏳ Pending |
 
 ### Low Priority
 
-| Improvement | Impact | Effort |
-|-------------|--------|--------|
-| VSCode extension documentation | DX improvement | Low |
-| More frequent Renovate schedule | Freshness | Low |
-| Document dependency version rationale | Clarity | Low |
+| Improvement | Impact | Effort | Status |
+|-------------|--------|--------|--------|
+| VSCode extension documentation | DX improvement | Low | ⏳ Pending |
+| More frequent Renovate schedule | Freshness | Low | ⏳ Pending |
+| Document dependency version rationale | Clarity | Low | ⏳ Pending |
+
+### Recently Completed (PR #678 and related)
+
+| Improvement | Impact | Date |
+|-------------|--------|------|
+| Enable Security (S) linting rules | Code security | 2026-02-15 |
+| Enable Simplicity (SIM) linting rules | Code quality | 2026-02-15 |
+| Refactor per-file exceptions | Maintainability | 2026-02-15 |
+| Add Trivy Docker scanning | Container security | 2026-02-11 |
+| SBOM generation with attestations | Supply chain | 2026-02-11 |
+| Property-based testing framework | Test depth | 2026-02-11 |
+| GitHub Pages documentation | Accessibility | 2026-02-11 |
 
 ---
 
@@ -265,11 +283,24 @@
 Rhiza demonstrates **enterprise-grade engineering** with particular excellence in:
 
 1. **Automation**: 14 CI/CD workflows, 52 make targets, 17 pre-commit hooks
-2. **Testing**: Comprehensive suite with innovative techniques (README testing, mock git repos)
-3. **Security**: Multi-layer protection with OIDC, CodeQL, bandit, pip-audit
-4. **Dependency Management**: Zero runtime deps, locked builds, automated updates
-5. **Developer Experience**: Unified Makefile interface, sensible defaults, Codespaces support
+2. **Testing**: Comprehensive suite with innovative techniques (README testing, mock git repos, property-based testing)
+3. **Security**: Multi-layer protection with OIDC, CodeQL, bandit, pip-audit, Trivy, SBOM generation
+4. **Code Quality**: 15 enforced rule sets including security (S) and simplicity (SIM) rules
+5. **Documentation**: GitHub Pages deployment with MkDocs, comprehensive guides, auto-generated API docs
+6. **Dependency Management**: Zero runtime deps, locked builds, automated updates
+7. **Developer Experience**: Unified Makefile interface, sensible defaults, Codespaces support
 
-The repository serves as an exemplary template for Python projects, demonstrating how to balance standardization with extensibility through its living template architecture.
+**Recent Improvements (2026-02-15)**:
+- ✅ Security (S) and simplicity (SIM) linting rules enabled
+- ✅ Per-file exceptions refactored for better maintainability
+- ✅ SBOM generation with CycloneDX and attestations
+- ✅ Trivy container vulnerability scanning for Docker images
+- ✅ Property-based testing with Hypothesis framework
+- ✅ GitHub Pages documentation deployment with MkDocs
+- ✅ Environment-based deployment protection for releases
 
-**Verdict**: Production-ready, suitable for enterprise adoption as a project template foundation.
+**Score Progression**: 9.4/10 → **9.6/10** (reflecting 7 major improvements)
+
+The repository serves as an exemplary template for Python projects, demonstrating how to balance standardization with extensibility through its living template architecture. The recent improvements in security tooling, testing depth, and documentation accessibility further strengthen its position as a production-ready foundation.
+
+**Verdict**: Production-ready, suitable for enterprise adoption as a project template foundation. Score improvement reflects significant enhancements in code quality, security posture, and documentation infrastructure.
