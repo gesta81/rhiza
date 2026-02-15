@@ -29,9 +29,9 @@ Rhiza is a well-architected, professionally-maintained repository implementing a
 | Test Coverage | 10/10 | 15% | 1.50 |
 | Security | 9.5/10 | 10% | 0.95 |
 | Dependency Management | 10/10 | 10% | 1.00 |
-| Shell Scripts | 9/10 | 5% | 0.45 |
+| Shell Scripts | 9.5/10 | 5% | 0.475 |
 | Maintainability | 9/10 | 5% | 0.45 |
-| **Overall** | **9.6/10** | 100% | **9.60** |
+| **Overall** | **9.6/10** | 100% | **9.625** |
 
 ---
 
@@ -272,29 +272,24 @@ Rhiza is a well-architected, professionally-maintained repository implementing a
 
 ---
 
-### 10. Shell Scripts: 9/10
+### 10. Shell Scripts: 9.5/10
 
 **Strengths:**
-- POSIX compliance with `set -eu` (fail on error, undefined variables)
+- Minimal and focused: Only 3 shell scripts (92 total lines)
+  - `.devcontainer/bootstrap.sh` (44 lines) - environment setup
+  - `.github/hooks/session-start.sh` (27 lines) - validation hook
+  - `.github/hooks/session-end.sh` (21 lines) - quality gates hook
+- Strict error handling with `set -euo pipefail` (fail on error, undefined variables, pipe failures)
 - Proper error handling with meaningful messages
-- Comprehensive help output with usage examples
+- Well-commented for their complexity level with clear explanations
 - Shellcheck validation via actionlint workflow
-- Dry-run support for safe testing
-- Color-coded output for warnings/errors/info (ANSI escape codes)
-- Proper variable scoping with local prefixes
-- User prompts with confirmation flows
-- Git status validation before releases
-- Comprehensive safety checks:
-  - Branch status verification
-  - Uncommitted changes detection
-  - Remote sync validation
-  - Tag existence checking
-  - GPG signing detection
+- Clear, focused responsibilities per script
+- Environment variable management with sensible defaults
+- Proper PATH handling and binary detection
+- Integration with project tooling (uv, make, pre-commit)
 
 **Weaknesses:**
-- Limited inline comments for complex logic sections
-- Some cryptic variable names due to POSIX constraints
-- Errors cause immediate exit vs. offering recovery options
+- Errors cause immediate exit vs. offering recovery options (by design for automation)
 
 ---
 
@@ -310,7 +305,7 @@ Rhiza is a well-architected, professionally-maintained repository implementing a
 
 | Improvement | Impact | Effort | Status |
 |-------------|--------|--------|--------|
-| More inline comments in shell scripts | Maintainability | Low | ⏳ Pending |
+| ~~More inline comments in shell scripts~~ | Maintainability | Low | ✅ Not needed (3 scripts, 92 lines, well-commented) |
 | Load/stress testing | Performance validation | Medium | ⏳ Pending |
 
 ### Remaining Low Priority
