@@ -39,6 +39,7 @@ SPLIT_MAKEFILES = [
     ".rhiza/make.d/presentation.mk",
     ".rhiza/make.d/github.mk",
     ".rhiza/make.d/agentic.mk",
+    ".rhiza/make.d/gh-aw.mk",
     ".rhiza/make.d/docker.mk",
     ".rhiza/make.d/docs.mk",
 ]
