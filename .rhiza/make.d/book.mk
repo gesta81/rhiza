@@ -50,7 +50,7 @@ BOOK_SECTIONS := \
 # 1. Aggregates API docs, coverage, test reports, notebooks, and MkDocs site into _book.
 # 2. Generates links.json to define the book structure.
 # 3. Uses 'minibook' to compile the final HTML site.
-book:: test docs marimushka mkdocs-build ## compile the companion book
+book:: test benchmark docs marimushka mkdocs-build ## compile the companion book
 	@printf "${BLUE}[INFO] Building combined documentation...${RESET}\n"
 	@rm -rf _book && mkdir -p _book
 
