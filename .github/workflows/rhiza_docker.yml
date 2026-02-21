@@ -27,7 +27,6 @@ jobs:
 
     env:
       UV_EXTRA_INDEX_URL: ${{ secrets.UV_EXTRA_INDEX_URL }}
-      echo "image_name=${REPO_NAME}:ci" >> "$GITHUB_OUTPUT"
           
     steps:
       - name: Checkout repository
