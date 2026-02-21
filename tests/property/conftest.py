@@ -1,7 +1,4 @@
-"""Pytest configuration for benchmark tests.
-
-This file can be used to add custom fixtures or configuration
-for your benchmark tests.
+"""Pytest configuration for property-based tests.
 
 Security Notes:
 - S101 (assert usage): Asserts are the standard way to validate test conditions in pytest.
@@ -11,4 +8,4 @@ Security Notes:
 
 def pytest_html_report_title(report):
     """Set the HTML report title."""
-    report.title = "Benchmark Tests"
+    report.title = "Hypothesis Property Tests"

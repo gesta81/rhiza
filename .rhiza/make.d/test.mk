@@ -107,15 +107,14 @@ hypothesis-test: install ## run property-based tests with Hypothesis
 	fi; \
 	printf "${BLUE}[INFO] Running Hypothesis property-based tests...${RESET}\n"; \
 	mkdir -p _tests/hypothesis; \
-	${UV_BIN} run pytest \
+	PYTEST_HTML_TITLE="Hypothesis tests" ${UV_BIN} run pytest \
 	  --ignore=${TESTS_FOLDER}/benchmarks \
 	  -v \
 	  --hypothesis-show-statistics \
 	  --hypothesis-seed=0 \
 	  -m "hypothesis or property" \
 	  --tb=short \
-	  --html=_tests/hypothesis/report.html \
-	  --html-title="Hypothesis tests"
+	  --html=_tests/hypothesis/report.html
 
 # The 'coverage-badge' target generates an SVG coverage badge from the JSON coverage report.
 # 1. Checks if the coverage JSON file exists.
