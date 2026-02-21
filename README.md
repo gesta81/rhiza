@@ -33,29 +33,36 @@ In the original Greek, spelt **ῥίζα**, pronounced *ree-ZAH*, and having the
 
 ### How It Works
 
-Rhiza uses a simple configuration file (`.rhiza/template.yml`) to control which templates sync to your project:
+Rhiza uses a simple configuration file (`.rhiza/template.yml`) to control which templates sync to your project. The recommended approach is to select **template bundles** by name — pre-configured sets of related files grouped by feature:
 
 ```yaml
 # .rhiza/template.yml
 repository: Jebel-Quant/rhiza
 ref: v0.7.1
 
-include: |
-  .github/workflows/*.yml
-  .pre-commit-config.yaml
-  ruff.toml
-  pytest.ini
-  Makefile
-
-exclude: |
-  .rhiza/scripts/customisations/*
+templates:
+  - core
+  - tests
+  - github
+  - docker
 ```
 
 **What you're seeing:**
 - **`repository`** - The upstream template source (**can be any repository, not just Rhiza!**)
 - **`ref`** - Which version tag/branch to sync from (e.g., `v0.7.1` or `main`)
-- **`include`** - File patterns to pull from the template (CI workflows, linting configs, etc.)
-- **`exclude`** - Paths to skip, protecting your customisations
+- **`templates`** - Template bundles to include by name (see [Available Template Bundles](#-available-template-bundles) below)
+
+For advanced use cases you can still use explicit `include`/`exclude` file patterns alongside or instead of bundles:
+
+```yaml
+# Advanced: file-pattern based selection
+include: |
+  .github/workflows/*.yml
+  ruff.toml
+
+exclude: |
+  .rhiza/scripts/customisations/*
+```
 
 > **💡 Automated Updates:** When using a version tag (e.g., `v0.7.1`) instead of a branch name, Renovate will automatically create pull requests to update the `ref` field when new versions are released. This keeps your templates up-to-date with minimal manual intervention. 
 >
@@ -70,48 +77,29 @@ When you run `uvx rhiza materialize` or trigger the automated sync workflow, Rhi
 - [Why Rhiza?](#-why-rhiza)
 - [Quick Start](#-quick-start)
 - [What You Get](#-what-you-get)
+- [Available Template Bundles](#-available-template-bundles)
 - [Integration Guide](#-integration-guide)
 - [Available Tasks](#-available-tasks)
 - [Advanced Topics](#-advanced-topics)
 - [CI/CD Support](#-cicd-support)
 - [Project Maintainability](#-project-maintainability)
+- [Learning Resources](#-learning-resources)
 - [Contributing to Rhiza](#-contributing-to-rhiza)
 
 ## 🚀 Quick Start
-
-### For New Projects
-
-Create a new project with Rhiza templates:
 
 ```bash
 # Navigate to your project directory
 cd /path/to/your/project
 
-# Initialise Rhiza configuration
+# Initialise Rhiza configuration and pick your bundles
 uvx rhiza init
 
-# Edit .rhiza/template.yml to select desired templates
-# Then materialize the templates
+# Edit .rhiza/template.yml to review the bundle selection, then apply
 uvx rhiza materialize
 ```
 
-### For Existing Projects
-
-Integrate Rhiza into an existing Python project:
-
-```bash
-# Navigate to your repository
-cd /path/to/your/project
-
-# Initialise and configure
-uvx rhiza init
-
-# Review and edit .rhiza/template.yml
-# Then apply templates
-uvx rhiza materialize
-```
-
-See the [Integration Guide](#-integration-guide) for detailed instructions and options.
+See the [Integration Guide](#-integration-guide) for more options, or follow the [step-by-step tutorial](https://github.com/Jebel-Quant/rhiza-education) in rhiza-education (Lessons 6–8).
 
 ### For Contributing to Rhiza
 
@@ -128,7 +116,22 @@ make install
 
 ## ✨ What You Get
 
-### Core Features
+## 📝 Architecture Decision Records
+
+This project maintains Architecture Decision Records (ADRs) to document important architectural and design decisions.
+
+ADRs help preserve the reasoning behind key decisions, making it easier for current and future contributors to understand why the project is structured the way it is.
+
+**Browse ADRs**: See [docs/adr/](docs/adr/) for all architecture decisions.
+
+**Key decisions documented:**
+- [ADR-0001: Use Architecture Decision Records](docs/adr/0001-use-architecture-decision-records.md)
+
+**Create a new ADR**: Use `make adr` to create a new ADR with AI assistance. The workflow will generate a comprehensive ADR document, update the index, and create a pull request for review.
+
+For more information about the ADR format and how to create new records, see the [ADR README](docs/adr/README.md).
+
+## 📁 Available Templates
 
 - 🚀 **CI/CD Templates** - Ready-to-use GitHub Actions and GitLab CI workflows
 - 🧪 **Testing Framework** - Comprehensive test setup with pytest
@@ -139,27 +142,29 @@ make install
 - 🎤 **Presentations** - Generate slides from Markdown using Marp
 - 🐳 **Containerization** - Docker and Dev Container configurations
 
-### Available Templates
+### Available Template Bundles
 
-This repository provides a curated set of reusable configuration templates:
+Rhiza organises its templates into **bundles** — pre-configured sets of related files grouped by feature. Select the bundles you need in `.rhiza/template.yml`:
 
-#### 🌱 Core Project Configuration
-- **.gitignore** - Sensible defaults for Python projects
-- **.editorconfig** - Editor configuration to enforce consistent coding standards
-- **ruff.toml** - Configuration for the Ruff linter and formatter
-- **pytest.ini** - Configuration for the `pytest` testing framework
-- **Makefile** - Task automation for common development workflows
-- **CODE_OF_CONDUCT.md** - Code of conduct for open-source projects
-- **CONTRIBUTING.md** - Contributing guidelines
+| Bundle | Description | Requires | Standalone |
+|--------|-------------|----------|------------|
+| `core` | Core Rhiza infrastructure (Makefile, linting, docs) | — | ✅ |
+| `github` | GitHub Actions workflows for CI/CD | `core` | ✅ |
+| `tests` | Testing infrastructure with pytest, coverage, and type checking | — | ✅ |
+| `marimo` | Interactive Marimo notebooks for data exploration and documentation | — | ✅ |
+| `book` | Comprehensive documentation book (API docs, coverage, notebooks) | `tests` | ❌ |
+| `docker` | Docker containerization support | — | ✅ |
+| `devcontainer` | VS Code DevContainer configuration | — | ✅ |
+| `gitlab` | GitLab CI/CD pipeline configuration | `core` | ✅ |
+| `presentation` | Presentation building using Marp | — | ✅ |
+| `lfs` | Git LFS (Large File Storage) support | — | ✅ |
+| `legal` | Legal and community files (LICENSE, CONTRIBUTING, CODE_OF_CONDUCT) | — | ✅ |
+| `renovate` | Renovate bot configuration for automated dependency updates | — | ✅ |
+| `gh-aw` | GitHub Agentic Workflows for AI-driven repository automation | `github` | ✅ |
 
-#### 🔧 Developer Experience
-- **.devcontainer/** - Development container setup (VS Code / Dev Containers)
-- **.pre-commit-config.yaml** - Pre-commit hooks for code quality
-- **docker/** - Example `Dockerfile` and `.dockerignore`
+**Tip:** Bundles marked **Standalone: ❌** cannot be used alone and must be combined with the bundles listed in the *Requires* column.
 
-#### 🚀 CI/CD & Automation
-- **.github/** - GitHub Actions workflows, scripts, and repository templates
-- **.gitlab/** - GitLab CI/CD workflows (see [.gitlab/README.md](.gitlab/README.md))
+For a complete reference of every file included in each bundle, see [`.rhiza/template-bundles.yml`](.rhiza/template-bundles.yml).
 
 ## 🧩 Integration Guide
 
@@ -191,33 +196,7 @@ uvx rhiza materialize
 - `--branch <branch>` - Use a specific rhiza branch (default: main)
 - `--help` - Show detailed usage information
 
-### Manual Integration (Selective Adoption)
-
-For cherry-picking specific templates or customising before integration:
-
-1. **Clone Rhiza** to a temporary location:
-   ```bash
-   cd /tmp
-   git clone https://github.com/jebel-quant/rhiza.git
-   ```
-
-2. **Copy desired templates** to your project:
-   ```bash
-   cd /path/to/your/project
-   git checkout -b rhiza
-   mkdir -p .github/workflows .rhiza/scripts
-   cp /tmp/rhiza/.rhiza/template.yml .rhiza/template.yml
-   cp /tmp/rhiza/.rhiza/scripts/sync.sh .rhiza/scripts
-   ```
-
-3. **Run the sync script**:
-   ```bash
-   ./.rhiza/scripts/sync.sh
-   git status
-   git diff  # Review changes
-   ```
-
-4. **Commit and push** if satisfied with the changes
+For a full step-by-step tutorial covering init, bundle selection, first materialise, and the sync lifecycle, see **[rhiza-education Lessons 6–8](https://github.com/Jebel-Quant/rhiza-education)**.
 
 ### Automated Sync (Continuous Updates)
 
@@ -480,6 +459,14 @@ Rhiza includes comprehensive maintainability features to help track project heal
 - **[.github/release.yml](.github/release.yml)** - Automated PR categorization for release notes
 
 Run `make todos` to scan for technical debt markers in your codebase, or explore the roadmap and technical debt documents to understand project evolution and planned improvements.
+
+## 📖 Learning Resources
+
+For a structured, tutorial-style introduction to Rhiza — covering CI/CD concepts, `uv`, Python project conventions, the sync lifecycle, and the full Rhiza ecosystem — see the companion education repository:
+
+**[jebel-quant/rhiza-education](https://github.com/Jebel-Quant/rhiza-education)** · [Rendered site](https://jebel-quant.github.io/rhiza-education/)
+
+The curriculum walks you through twelve lessons in order, from the motivation for living templates all the way to running your first materialize, configuring Renovate, and customising safely.
 
 ## 🛠️ Contributing to Rhiza
 
