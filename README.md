@@ -116,7 +116,22 @@ make install
 
 ## ✨ What You Get
 
-### Core Features
+## 📝 Architecture Decision Records
+
+This project maintains Architecture Decision Records (ADRs) to document important architectural and design decisions.
+
+ADRs help preserve the reasoning behind key decisions, making it easier for current and future contributors to understand why the project is structured the way it is.
+
+**Browse ADRs**: See [docs/adr/](docs/adr/) for all architecture decisions.
+
+**Key decisions documented:**
+- [ADR-0001: Use Architecture Decision Records](docs/adr/0001-use-architecture-decision-records.md)
+
+**Create a new ADR**: Use `make adr` to create a new ADR with AI assistance. The workflow will generate a comprehensive ADR document, update the index, and create a pull request for review.
+
+For more information about the ADR format and how to create new records, see the [ADR README](docs/adr/README.md).
+
+## 📁 Available Templates
 
 - 🚀 **CI/CD Templates** - Ready-to-use GitHub Actions and GitLab CI workflows
 - 🧪 **Testing Framework** - Comprehensive test setup with pytest
